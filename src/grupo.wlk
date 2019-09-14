@@ -1,6 +1,6 @@
 /** First Wollok example */
 object grupo {
 	method integrantes() {
-		return 'Macarena Damian'
+		return 'Macarena Damian Pablo'
 	}
 }
