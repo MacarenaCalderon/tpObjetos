@@ -2,13 +2,12 @@ import barrilete_cosmico.*
 describe "test de barrilete"{
 	
 	test "obtener los destinos mas importantes de barrilete cosmico"{
-		assert.equals(["Garlic´s Sea","Last Toninas"],barrileteCosmico.destinosMasImportantes())
+		assert.equals(["Garlic's Sea","Last Toninas"],barrileteCosmico.destinosMasImportantes())
 	}
 	
 	test "aplicar 25 porciento de descuento a LastToninas"{
-		lastToninas.aplicarDescuento(25)
-		assert.equals(2625,lastToninas.precio())
-		assert.that(lastToninas.equipajeImprescindible().contains("Certificado De Descuento"))
+		assert.equals(2625,lastToninas.aplicarDescuento(25))
+		assert.that(lastToninas.equipajeImprescindible().contains("Certificado de Descuento"))
 		
 	}
 	
@@ -22,7 +21,7 @@ describe "test de barrilete"{
 	}
 	
 	test "obtener destinos peligrosos"{
-		assert.equals(lastToninas, barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
+		assert.equals([lastToninas], barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
 		
 	}
 
@@ -40,7 +39,7 @@ describe "test de barrilete"{
 	
 	test "Pablo Hari vuela a Silver´s Sea"{
 		pabloHari.volarA(silversSea)
-		assert.that(pabloHari.conoce().contains("Silver´s Sea"))
+		assert.that(pabloHari.conoce().contains("Silver's Sea"))
 		assert.equals(150,pabloHari.dineroEnCuenta())
 	}
 }
