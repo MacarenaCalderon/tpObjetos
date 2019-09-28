@@ -1,0 +1,46 @@
+import barrilete_cosmico.*
+describe "test de barrilete"{
+	
+	test "obtener los destinos mas importantes de barrilete cosmico"{
+		assert.equals(["Garlic´s Sea","Last Toninas"],barrileteCosmico.destinosMasImportantes())
+	}
+	
+	test "aplicar 25 porciento de descuento a LastToninas"{
+		lastToninas.aplicarDescuento(25)
+		assert.equals(2625,lastToninas.precio())
+		assert.that(lastToninas.equipajeImprescindible().contains("Certificado De Descuento"))
+		
+	}
+	
+	test "Silver´s Sea es un destino peligroso"{
+		assert.notThat(silversSea.equipajeImprescindible().contains("Vacuna"))
+	}
+	
+	test "aplicar 15 porciento a todos los destinos de barrilete cosmico"{
+		
+		assert.equals([2125,1147.5,2975,1275],barrileteCosmico.aplicarDescuentos(15))
+	}
+	
+	test "obtener destinos peligrosos"{
+		assert.equals(lastToninas, barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
+		
+	}
+
+	test "barrilete cosmico es una empresa extrema"{
+		assert.that(barrileteCosmico.esEmpresaExtrema())
+	}
+	
+	test "conocer carta de destinos"{
+		assert.equals(["Garlic's Sea", "Silver's Sea", "Last Toninas", "Good Airs"], barrileteCosmico.conocerCartaDeDestinos())
+	}
+	
+	test "obtener millas de pHari"{
+		assert.equals(500, pabloHari.kilometrosAcumulados())
+	}
+	
+	test "Pablo Hari vuela a Silver´s Sea"{
+		pabloHari.volarA(silversSea)
+		assert.that(pabloHari.conoce().contains("Silver´s Sea"))
+		assert.equals(150,pabloHari.dineroEnCuenta())
+	}
+}
