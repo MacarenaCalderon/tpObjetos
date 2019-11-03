@@ -1,16 +1,34 @@
 object barrileteCosmico {
+	
+	var property garlicsSea = new Localidad ("Garlics Sea", [ "caña de pescar", "piloto" ], 2500, 100) 
+	
+	var silversSea = new Localidad ("Silver's Sea", [ "Protector Solar", "Equipo de Buceo" ], 1350, 500)
 
-	var destinos = [ garlicsSea, silversSea, lastToninas, goodAirs ]
+    var property lastToninas = new Localidad ("Last Toninas", [ "Vacuna Gripal", "Vacuna B", "Necronomicron" ], 3500, 1000)
 
-	method destinos() = destinos
+    var  goodAirs = new Localidad ("Good Airs", [ "Cerveza", "Protector Solar" ], 1500, 0) 
+
+	var property destinos = [ garlicsSea, silversSea, lastToninas, goodAirs]
+	
+	var property pabloHari = new Usuario ("PHari",goodAirs,100000,#{lastToninas, goodAirs},#{},500)
+	
+	var  tren = new MedioTransporte (4, 5) 
+    
+    var property transportes=[tren]
+    
+    var property viaje1 = new Viaje (goodAirs, silversSea,transportes.anyOne())
+
 
 	method destinosMasImportantes() {
-		var destacados = destinos.filter({ destino => destino.precio() > 2000 })
-		return destacados.map({ destino => destino.nombre() })
+		return destinos.filter({ destino => destino.esDestacado() })
+	}
+	
+	method mostrarPrecios(){
+		return destinos.map({destino=>destino.precio()})
 	}
 
 	method aplicarDescuentos(descuento) {
-		return destinos.map({ destino => destino.aplicarDescuento(descuento) })
+		return destinos.forEach({ destino => destino.aplicarDescuento(descuento) })
 	}
 
 	method esEmpresaExtrema() = destinos.any({ destino => destino.requiereVacuna() })
@@ -19,133 +37,106 @@ object barrileteCosmico {
 
 }
 
-object garlicsSea {
+class MedioTransporte {
 
-	const nombre = "Garlic's Sea"
-	var equipajeImprescindible = [ "caña de pescar", "piloto" ]
-	var precio = 2500
+	var property tardanza
+	var property precioPorKm
 
-	method precio() = precio
+	constructor(unaTardanza, unPrecioPorKm) {
+		tardanza = unaTardanza
+		precioPorKm = unPrecioPorKm
+	}
 
-	method precio(_precio) = { precio = _precio }
+}
 
-	method nombre() = nombre
 
-	method equipajeImprescindible() = equipajeImprescindible
+
+class Localidad {
+
+	var property nombre
+	var property equipajeImprescindible
+	var property precio
+	var property kmUbicacion
+
+	constructor(unNombre, unEquipajeImprescindible, unPrecio, unKmUbicacion) {
+		nombre = unNombre
+		equipajeImprescindible = unEquipajeImprescindible
+		precio = unPrecio
+		kmUbicacion = unKmUbicacion
+	}
 
 	method aplicarDescuento(porcentajeDescuento) {
 		precio = precio - (porcentajeDescuento * precio / 100)
 		equipajeImprescindible.add("Certificado de Descuento")
-		return precio
 	}
 
 	method requiereVacuna() = equipajeImprescindible.any({ equipaje => equipaje.contains("Vacuna") })
 
-}
+	method esDestacado() = precio > 2000
 
-object silversSea {
-
-	const nombre = "Silver's Sea"
-	var equipajeImprescindible = [ "Protector Solar", "Equipo de Buceo" ]
-	var precio = 1350
-
-	method precio() = precio
-
-	method precio(_precio) = { precio = _precio }
-
-	method nombre() = nombre
-
-	method equipajeImprescindible() = equipajeImprescindible
-
-	method aplicarDescuento(porcentajeDescuento) {
-		precio = precio - (porcentajeDescuento * precio / 100)
-		equipajeImprescindible.add("Certificado de Descuento")
-		return precio
-	}
-
-	method requiereVacuna() = equipajeImprescindible.any({ equipaje => equipaje.contains("Vacuna") })
+	method distanciaA(ciudad) = kmUbicacion - ciudad.kmUbicacion()
 
 }
 
-object lastToninas {
 
-	const nombre = "Last Toninas"
-	var equipajeImprescindible = [ "Vacuna Gripal", "Vacuna B", "Necronomicron" ]
-	var precio = 3500
+class Viaje {
 
-	method precio() = precio
-
-	method precio(_precio) = { precio = _precio }
-
-	method nombre() = nombre
-
-	method equipajeImprescindible() = equipajeImprescindible
-
-	method aplicarDescuento(porcentajeDescuento) {
-		precio = precio - (porcentajeDescuento * precio / 100)
-		equipajeImprescindible.add("Certificado de Descuento")
-		return precio
-	}
-
-	method requiereVacuna() = equipajeImprescindible.any({ equipaje => equipaje.contains("Vacuna") })
-
-}
-
-object goodAirs {
-
-	const nombre = "Good Airs"
-	var equipajeImprescindible = [ "Cerveza", "Protector Solar" ]
-	var precio = 1500
-
-	method precio() = precio
-
-	method precio(_precio) = { precio = _precio }
-
-	method nombre() = nombre
-
-	method equipajeImprescindible() = equipajeImprescindible
-
-	method aplicarDescuento(porcentajeDescuento) {
-		precio = precio - (porcentajeDescuento * precio / 100)
-		equipajeImprescindible.add("Certificado de Descuento")
-		return precio
-	}
-
-	method requiereVacuna() = equipajeImprescindible.any({ equipaje => equipaje.contains("Vacuna") })
-
-}
-
-object pabloHari {
-
-	var nombreUsuario = "PHari"
-	var conoce = [ lastToninas, goodAirs ]
-	var dineroEnCuenta = 1500
-	var usuariosQueSigue = []
-
-	method nombre() = "Pablo Hari"
-
-	method nombreUsuario() = nombreUsuario
-
-	method nombreUsuario(_nombre) = { nombreUsuario = _nombre }
-
-	method dineroEnCuenta() = dineroEnCuenta
+	var property ciudadPartida
+	var property ciudadLlegada
+	var property transporte
 	
-	method conoce() = conoce.map({ destino => destino.nombre() })
+	constructor (unaCiudadPartida, unaCiudadLlegada, unTransporte){
+		ciudadPartida=unaCiudadPartida
+		ciudadLlegada=unaCiudadLlegada
+		transporte=unTransporte
+	}
+	
+	method kmDelViaje(){
+		return ciudadPartida.distanciaA(ciudadLlegada).abs()
+	}
 
+	method precio(unaCiudadPartida, unaCiudadLlegada, unTransporte) {
+		return self.kmDelViaje() * unTransporte.precioPorKm() + unaCiudadLlegada.precio()
+	}
 
-	method volarA(destino) {
-		destino.precio()<dineroEnCuenta
-		conoce.add(destino)
-		dineroEnCuenta = dineroEnCuenta - destino.precio()
+}
+
+class Usuario {
+
+	var property nombreUsuario
+	var property localidadOrigen
+	var property dineroEnCuenta
+	var property viajes=#{}
+	var property usuariosQueSigue 
+	var property kmsAcumulados
+	
+	constructor (unNombreUsuario, unaLocalidadOrigen, unDineroEnCuenta, unosViajes, unosUsuariosQueSigue, unosKmsAcumulados ){
+		nombreUsuario=unNombreUsuario
+		localidadOrigen=unaLocalidadOrigen
+		dineroEnCuenta=unDineroEnCuenta
+		usuariosQueSigue=unosUsuariosQueSigue
+		kmsAcumulados=unosKmsAcumulados
+	}
+
+	method puedeViajar(viaje) = viaje.precio(localidadOrigen, viaje.ciudadLlegada(), viaje.transporte()) < dineroEnCuenta && viaje.ciudadPartida()==self.localidadOrigen()
+
+	method volar(viaje) {
+		if (self.puedeViajar(viaje)) {
+			viajes.add(viaje)
+			dineroEnCuenta = dineroEnCuenta - viaje.precio(localidadOrigen, viaje.ciudadLlegada(), viaje.transporte())
+		}
 	}
 
 	method seguirUsuario(usuario) {
-		usuariosQueSigue.add(usuario)
-		usuario.seguirUsuario(self)
+		if (!self.usuariosQueSigue().contains(usuario)) {
+			usuariosQueSigue.add(usuario)
+			usuario.seguirUsuario(self)
+		}
 	}
 
-	method kilometrosAcumulados()=conoce.sum({ destino => destino.precio()})*0.1
-	
+	method kmsAcumulados() = kmsAcumulados + viajes.sum({ viaje => viaje.kmDelViaje() })
 
 }
+
+
 

@@ -1,45 +1,60 @@
 import barrilete_cosmico.*
 describe "test de barrilete"{
 	
-	test "obtener los destinos mas importantes de barrilete cosmico"{
-		assert.equals(["Garlic's Sea","Last Toninas"],barrileteCosmico.destinosMasImportantes())
+	//objetos que se utilizan en diferentes tests) 
+	
+	const silversSea = new Localidad ("Silver's Sea", [ "Protector Solar", "Equipo de Buceo" ], 1350, 500)
+
+    const lastToninas = new Localidad ("Last Toninas", [ "Vacuna Gripal", "Vacuna B", "Necronomicron" ], 3500, 1000)
+
+       
+	test "obtener los destinos mas importantes de barrilete cosmico, se espera:Cósmico 
+   Garlic´s Sea, Last Tonina"{
+		assert.equals([barrileteCosmico.garlicsSea(),barrileteCosmico.lastToninas()],barrileteCosmico.destinosMasImportantes())
 	}
 	
-	test "aplicar 25 porciento de descuento a LastToninas"{
-		assert.equals(2625,lastToninas.aplicarDescuento(25))
+	test "aplicar 25 porciento de descuento a LastToninas, 
+    se espera obtener:El precio de Last Toninas es de $2625 y contiene certificado de descuento"{
+        lastToninas.aplicarDescuento(25)
+		assert.equals(2625,lastToninas.precio())
 		assert.that(lastToninas.equipajeImprescindible().contains("Certificado de Descuento"))
 		
 	}
 	
-	test "Silver´s Sea es un destino peligroso"{
+	test "Silver´s Sea es un destino peligroso, se espera:false"{
 		assert.notThat(silversSea.equipajeImprescindible().contains("Vacuna"))
 	}
 	
-	test "aplicar 15 porciento a todos los destinos de barrilete cosmico"{
+	test "aplicar 15 porciento a todos los destinos de barrilete cosmico, 
+se espera:Garlic´s sea: $2125 Silver's Sea: $1147.5 Last Toninas: $2975 Good Airs: $1275 
+Todos deben poseer el certificado descuento"{
 		
-		assert.equals([2125,1147.5,2975,1275],barrileteCosmico.aplicarDescuentos(15))
+		barrileteCosmico.aplicarDescuentos(15)
+		assert.equals([2125,1147.5,2975,1275],barrileteCosmico.mostrarPrecios())
+		assert.that(barrileteCosmico.destinos().all({destino=>destino.equipajeImprescindible().contains("Certificado de Descuento")}))
 	}
 	
-	test "obtener destinos peligrosos"{
-		assert.equals([lastToninas], barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
+	test "obtener destinos peligrosos, se espera:Last Toninas"{
+		assert.equals([barrileteCosmico.lastToninas()], barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
 		
 	}
 
-	test "barrilete cosmico es una empresa extrema"{
+	test "barrilete cosmico es una empresa extrema, se espera:true"{
 		assert.that(barrileteCosmico.esEmpresaExtrema())
 	}
 	
-	test "conocer carta de destinos"{
-		assert.equals(["Garlic's Sea", "Silver's Sea", "Last Toninas", "Good Airs"], barrileteCosmico.conocerCartaDeDestinos())
+	test "conocer carta de destinos, se espera:Last Toninas, Garlic´s sea, Good Airs y Silver's Sea"{
+		assert.equals(["Garlics Sea", "Silver's Sea", "Last Toninas", "Good Airs"], barrileteCosmico.conocerCartaDeDestinos())
 	}
 	
-	test "obtener millas de pHari"{
-		assert.equals(500, pabloHari.kilometrosAcumulados())
+	test "obtener millas de pHari, se espera:PHari tiene 500 kilómetros"{
+		assert.equals(500, barrileteCosmico.pabloHari().kmsAcumulados())
 	}
 	
-	test "Pablo Hari vuela a Silver´s Sea"{
-		pabloHari.volarA(silversSea)
-		assert.that(pabloHari.conoce().contains("Silver's Sea"))
-		assert.equals(150,pabloHari.dineroEnCuenta())
+	test "Pablo Hari vuela a Silver´s SeaPHari puede volar, y  Silver's Sea es agregado en su historial.
+    PHari tiene en su cuenta $96150"{
+		barrileteCosmico.pabloHari().volar(barrileteCosmico.viaje1())
+		assert.that(barrileteCosmico.pabloHari().viajes().contains(barrileteCosmico.viaje1()))
+		assert.equals(96150,barrileteCosmico.pabloHari().dineroEnCuenta())
 	}
 }
