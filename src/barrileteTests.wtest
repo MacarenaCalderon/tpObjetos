@@ -7,10 +7,17 @@ describe "test de barrilete"{
 
     const lastToninas = new Localidad ("Last Toninas", [ "Vacuna Gripal", "Vacuna B", "Necronomicron" ], 3500, 1000)
 
+    var  garlicsSea = new Localidad ("Garlics Sea", [ "caña de pescar", "piloto" ], 2500, 100)
+    
+    var  goodAirs = new Localidad ("Good Airs", [ "Cerveza", "Protector Solar" ], 1500, 0)
+    
+    var pabloHari = new Usuario ("PHari",goodAirs,100000,#{lastToninas, goodAirs},#{})
        
-	test "obtener los destinos mas importantes de barrilete cosmico, se espera:Cósmico 
-   Garlic´s Sea, Last Tonina"{
-		assert.equals([barrileteCosmico.garlicsSea(),barrileteCosmico.lastToninas()],barrileteCosmico.destinosMasImportantes())
+	test "obtener los destinos mas importantes de barrilete cosmico, se espera: 
+   Garlic´s Sea, Last Toninas"{
+		assert.equals([garlicsSea,lastToninas],
+			barrileteCosmico.destinosMasImportantes()
+		)
 	}
 	
 	test "aplicar 25 porciento de descuento a LastToninas, 
@@ -26,8 +33,8 @@ describe "test de barrilete"{
 	}
 	
 	test "aplicar 15 porciento a todos los destinos de barrilete cosmico, 
-se espera:Garlic´s sea: $2125 Silver's Sea: $1147.5 Last Toninas: $2975 Good Airs: $1275 
-Todos deben poseer el certificado descuento"{
+    se espera:Garlic´s sea: $2125 Silver's Sea: $1147.5 Last Toninas: $2975 Good Airs: $1275 
+    Todos deben poseer el certificado descuento"{
 		
 		barrileteCosmico.aplicarDescuentos(15)
 		assert.equals([2125,1147.5,2975,1275],barrileteCosmico.mostrarPrecios())
@@ -35,7 +42,8 @@ Todos deben poseer el certificado descuento"{
 	}
 	
 	test "obtener destinos peligrosos, se espera:Last Toninas"{
-		assert.equals([barrileteCosmico.lastToninas()], barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
+		
+		assert.equals([lastToninas], barrileteCosmico.destinos().filter({ destino => destino.requiereVacuna()}))
 		
 	}
 
@@ -47,14 +55,15 @@ Todos deben poseer el certificado descuento"{
 		assert.equals(["Garlics Sea", "Silver's Sea", "Last Toninas", "Good Airs"], barrileteCosmico.conocerCartaDeDestinos())
 	}
 	
-	test "obtener millas de pHari, se espera:PHari tiene 500 kilómetros"{
-		assert.equals(500, barrileteCosmico.pabloHari().kmsAcumulados())
+	test "obtener millas de pHari, se espera:PHari tiene 0 kilómetros"{
+		assert.equals(0, pabloHari.kmsAcumulados())
 	}
 	
 	test "Pablo Hari vuela a Silver´s SeaPHari puede volar, y  Silver's Sea es agregado en su historial.
     PHari tiene en su cuenta $96150"{
-		barrileteCosmico.pabloHari().volar(barrileteCosmico.viaje1())
-		assert.that(barrileteCosmico.pabloHari().viajes().contains(barrileteCosmico.viaje1()))
-		assert.equals(96150,barrileteCosmico.pabloHari().dineroEnCuenta())
+    	var viaje1= barrileteCosmico.armarViaje(goodAirs, silversSea)
+		pabloHari.viajar(viaje1)
+		assert.that(pabloHari.viajes().contains(viaje1))
+		assert.equals(96150,pabloHari.dineroEnCuenta())
 	}
 }

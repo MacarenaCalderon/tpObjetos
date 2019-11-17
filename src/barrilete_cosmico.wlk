@@ -1,24 +1,15 @@
 object barrileteCosmico {
 	
-	var property garlicsSea = new Localidad ("Garlics Sea", [ "caña de pescar", "piloto" ], 2500, 100) 
-	
-	var silversSea = new Localidad ("Silver's Sea", [ "Protector Solar", "Equipo de Buceo" ], 1350, 500)
 
-    var property lastToninas = new Localidad ("Last Toninas", [ "Vacuna Gripal", "Vacuna B", "Necronomicron" ], 3500, 1000)
-
-    var  goodAirs = new Localidad ("Good Airs", [ "Cerveza", "Protector Solar" ], 1500, 0) 
-
-	var property destinos = [ garlicsSea, silversSea, lastToninas, goodAirs]
-	
-	var property pabloHari = new Usuario ("PHari",goodAirs,100000,#{lastToninas, goodAirs},#{},500)
-	
-	var  tren = new MedioTransporte (4, 5) 
+	var property  destinos = [ new Localidad ("Garlics Sea", [ "caña de pescar", "piloto" ], 2500, 100), 
+		new Localidad ("Silver's Sea", [ "Protector Solar", "Equipo de Buceo" ], 1350, 500), 
+		new Localidad ("Last Toninas", [ "Vacuna Gripal", "Vacuna B", "Necronomicron" ], 3500, 1000),
+        new Localidad ("Good Airs", [ "Cerveza", "Protector Solar" ], 1500, 0) 
+	]
+	 
     
-    var property transportes=[tren]
+    var transportes=[new MedioTransporte (4, 5), new MedioTransporte (4, 5)]
     
-    var property viaje1 = new Viaje (goodAirs, silversSea,transportes.anyOne())
-
-
 	method destinosMasImportantes() {
 		return destinos.filter({ destino => destino.esDestacado() })
 	}
@@ -34,12 +25,16 @@ object barrileteCosmico {
 	method esEmpresaExtrema() = destinos.any({ destino => destino.requiereVacuna() })
 
 	method conocerCartaDeDestinos() = destinos.map({ destino => destino.nombre() })
+	
+	method armarViaje(_destino,_llegada){
+		return new Viaje(_destino,_llegada,transportes.anyOne())
+	}
 
 }
 
 class MedioTransporte {
 
-	var property tardanza
+	var  tardanza
 	var property precioPorKm
 
 	constructor(unaTardanza, unPrecioPorKm) {
@@ -95,35 +90,33 @@ class Viaje {
 		return ciudadPartida.distanciaA(ciudadLlegada).abs()
 	}
 
-	method precio(unaCiudadPartida, unaCiudadLlegada, unTransporte) {
-		return self.kmDelViaje() * unTransporte.precioPorKm() + unaCiudadLlegada.precio()
+	method precio() {
+		return self.kmDelViaje() * transporte.precioPorKm() + ciudadLlegada.precio()
 	}
 
 }
 
 class Usuario {
 
-	var property nombreUsuario
+	var  nombreUsuario
 	var property localidadOrigen
 	var property dineroEnCuenta
 	var property viajes=#{}
 	var property usuariosQueSigue 
-	var property kmsAcumulados
 	
-	constructor (unNombreUsuario, unaLocalidadOrigen, unDineroEnCuenta, unosViajes, unosUsuariosQueSigue, unosKmsAcumulados ){
-		nombreUsuario=unNombreUsuario
+	constructor (unNombreUsuario, unaLocalidadOrigen, unDineroEnCuenta, unosViajes, unosUsuariosQueSigue){
 		localidadOrigen=unaLocalidadOrigen
 		dineroEnCuenta=unDineroEnCuenta
 		usuariosQueSigue=unosUsuariosQueSigue
-		kmsAcumulados=unosKmsAcumulados
 	}
 
-	method puedeViajar(viaje) = viaje.precio(localidadOrigen, viaje.ciudadLlegada(), viaje.transporte()) < dineroEnCuenta && viaje.ciudadPartida()==self.localidadOrigen()
+	method puedeViajar(viaje) = viaje.precio() < dineroEnCuenta && viaje.ciudadPartida()==self.localidadOrigen()
 
-	method volar(viaje) {
+	method viajar(viaje) {
 		if (self.puedeViajar(viaje)) {
 			viajes.add(viaje)
-			dineroEnCuenta = dineroEnCuenta - viaje.precio(localidadOrigen, viaje.ciudadLlegada(), viaje.transporte())
+			dineroEnCuenta = dineroEnCuenta - viaje.precio()
+			self.localidadOrigen(viaje.ciudadLlegada())
 		}
 	}
 
@@ -134,7 +127,7 @@ class Usuario {
 		}
 	}
 
-	method kmsAcumulados() = kmsAcumulados + viajes.sum({ viaje => viaje.kmDelViaje() })
+	method kmsAcumulados() = viajes.sum({ viaje => viaje.kmDelViaje() })
 
 }
 
